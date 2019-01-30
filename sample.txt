@@ -1,0 +1,36 @@
+header {
+#include <iostream>
+#include <cmath>
+};
+
+start pm;
+
+PLUS : "+";
+MINUS : "-";
+MUL : "*";
+DIV : "\";
+WS : "[ \t\r\n ]";
+LP : "(";
+RP : ")";
+NUMBER : "[0-9]+";
+POW : "^";
+
+ignore WS;
+
+pm [int acc] returns [int val] : 
+   pow[0] PLUS pm[$md.val + $acc] {$val = $pm.val;}
+ | pow[0] MINUS pm[$md.val - $acc] {$val = $pm.val;} 
+ | pow[0] {$val = $pm.val;};
+
+pow returns [int val]: 
+    var POW pow {$val = std::pow($var.val, $pow.val);}
+    | var {$val = $var.val;};
+    
+var returns [int val]: 
+    NUMBER {$val = $NUMBER.text;}
+    | LP pm RP {$val = pm.val;};
+
+
+
+
+
