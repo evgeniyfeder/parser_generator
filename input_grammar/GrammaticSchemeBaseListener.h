@@ -1,5 +1,9 @@
 
-// Generated from /home/efeder/work/itmo/mt/lab4/antlr/GrammaticScheme.g4 by ANTLR 4.7
+#include <string>
+#include "../parser_generator/grammatic.h"
+
+
+// Generated from /home/efeder/work/itmo/mt/lab4/input_grammar/GrammaticScheme.g4 by ANTLR 4.7
 
 #pragma once
 
@@ -28,11 +32,11 @@ public:
   virtual void enterLexem(GrammaticSchemeParser::LexemContext * /*ctx*/) override { }
   virtual void exitLexem(GrammaticSchemeParser::LexemContext * /*ctx*/) override { }
 
-  virtual void enterIgnore(GrammaticSchemeParser::IgnoreContext * /*ctx*/) override { }
-  virtual void exitIgnore(GrammaticSchemeParser::IgnoreContext * /*ctx*/) override { }
-
   virtual void enterRules(GrammaticSchemeParser::RulesContext * /*ctx*/) override { }
   virtual void exitRules(GrammaticSchemeParser::RulesContext * /*ctx*/) override { }
+
+  virtual void enterOne_rule(GrammaticSchemeParser::One_ruleContext * /*ctx*/) override { }
+  virtual void exitOne_rule(GrammaticSchemeParser::One_ruleContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

@@ -1,5 +1,9 @@
 
-// Generated from /home/efeder/work/itmo/mt/lab4/antlr/GrammaticScheme.g4 by ANTLR 4.7
+#include <string>
+#include "../parser_generator/grammatic.h"
+
+
+// Generated from /home/efeder/work/itmo/mt/lab4/input_grammar/GrammaticScheme.g4 by ANTLR 4.7
 
 #pragma once
 
@@ -19,8 +23,8 @@ public:
   };
 
   enum {
-    RuleGrammatic = 0, RuleStart = 1, RuleHeader = 2, RuleLexem = 3, RuleIgnore = 4, 
-    RuleRules = 5
+    RuleGrammatic = 0, RuleStart = 1, RuleHeader = 2, RuleLexem = 3, RuleRules = 4, 
+    RuleOne_rule = 5
   };
 
   GrammaticSchemeParser(antlr4::TokenStream *input);
@@ -37,19 +41,22 @@ public:
   class StartContext;
   class HeaderContext;
   class LexemContext;
-  class IgnoreContext;
-  class RulesContext; 
+  class RulesContext;
+  class One_ruleContext; 
 
   class  GrammaticContext : public antlr4::ParserRuleContext {
   public:
+    grammatic_t g;
+    GrammaticSchemeParser::HeaderContext *headerContext = nullptr;;
+    GrammaticSchemeParser::StartContext *st = nullptr;;
+    GrammaticSchemeParser::LexemContext *lexemContext = nullptr;;
+    GrammaticSchemeParser::RulesContext *rulesContext = nullptr;;
     GrammaticContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     StartContext *start();
     HeaderContext *header();
     std::vector<LexemContext *> lexem();
     LexemContext* lexem(size_t i);
-    std::vector<IgnoreContext *> ignore();
-    IgnoreContext* ignore(size_t i);
     std::vector<RulesContext *> rules();
     RulesContext* rules(size_t i);
 
@@ -62,6 +69,8 @@ public:
 
   class  StartContext : public antlr4::ParserRuleContext {
   public:
+    std::string start_token;
+    antlr4::Token *ntermToken = nullptr;;
     StartContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *START();
@@ -77,6 +86,8 @@ public:
 
   class  HeaderContext : public antlr4::ParserRuleContext {
   public:
+    std::string header_text;
+    antlr4::Token *codeToken = nullptr;;
     HeaderContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *HEADER();
@@ -92,12 +103,17 @@ public:
 
   class  LexemContext : public antlr4::ParserRuleContext {
   public:
+    term_t term;
+    bool ignore;
+    antlr4::Token *termToken = nullptr;;
+    antlr4::Token *stringToken = nullptr;;
     LexemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *TERM();
     antlr4::tree::TerminalNode *COLON();
     antlr4::tree::TerminalNode *STRING();
     antlr4::tree::TerminalNode *SCOLON();
+    antlr4::tree::TerminalNode *IGNORE();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -106,36 +122,22 @@ public:
 
   LexemContext* lexem();
 
-  class  IgnoreContext : public antlr4::ParserRuleContext {
-  public:
-    IgnoreContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *IGNORE();
-    antlr4::tree::TerminalNode *TERM();
-    antlr4::tree::TerminalNode *SCOLON();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  IgnoreContext* ignore();
-
   class  RulesContext : public antlr4::ParserRuleContext {
   public:
+    non_term_t nterm;
+    antlr4::Token *ntermToken = nullptr;;
+    antlr4::Token *attrToken = nullptr;;
+    GrammaticSchemeParser::One_ruleContext *one_ruleContext = nullptr;;
     RulesContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    std::vector<antlr4::tree::TerminalNode *> NTERM();
-    antlr4::tree::TerminalNode* NTERM(size_t i);
+    antlr4::tree::TerminalNode *NTERM();
     antlr4::tree::TerminalNode *COLON();
     antlr4::tree::TerminalNode *SCOLON();
+    std::vector<One_ruleContext *> one_rule();
+    One_ruleContext* one_rule(size_t i);
     std::vector<antlr4::tree::TerminalNode *> ATTR();
     antlr4::tree::TerminalNode* ATTR(size_t i);
     antlr4::tree::TerminalNode *RETURS();
-    std::vector<antlr4::tree::TerminalNode *> TERM();
-    antlr4::tree::TerminalNode* TERM(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> CODE();
-    antlr4::tree::TerminalNode* CODE(size_t i);
     std::vector<antlr4::tree::TerminalNode *> STICK();
     antlr4::tree::TerminalNode* STICK(size_t i);
 
@@ -145,6 +147,31 @@ public:
   };
 
   RulesContext* rules();
+
+  class  One_ruleContext : public antlr4::ParserRuleContext {
+  public:
+    rule_t rule;
+    antlr4::Token *termToken = nullptr;;
+    antlr4::Token *ntermToken = nullptr;;
+    antlr4::Token *attrToken = nullptr;;
+    antlr4::Token *codeToken = nullptr;;
+    One_ruleContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<antlr4::tree::TerminalNode *> TERM();
+    antlr4::tree::TerminalNode* TERM(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> NTERM();
+    antlr4::tree::TerminalNode* NTERM(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> CODE();
+    antlr4::tree::TerminalNode* CODE(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> ATTR();
+    antlr4::tree::TerminalNode* ATTR(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  One_ruleContext* one_rule();
 
 
 private:

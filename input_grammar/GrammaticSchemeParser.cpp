@@ -1,5 +1,9 @@
 
-// Generated from /home/efeder/work/itmo/mt/lab4/antlr/GrammaticScheme.g4 by ANTLR 4.7
+#include <string>
+#include "../parser_generator/grammatic.h"
+
+
+// Generated from /home/efeder/work/itmo/mt/lab4/input_grammar/GrammaticScheme.g4 by ANTLR 4.7
 
 
 #include "GrammaticSchemeListener.h"
@@ -53,14 +57,6 @@ GrammaticSchemeParser::LexemContext* GrammaticSchemeParser::GrammaticContext::le
   return getRuleContext<GrammaticSchemeParser::LexemContext>(i);
 }
 
-std::vector<GrammaticSchemeParser::IgnoreContext *> GrammaticSchemeParser::GrammaticContext::ignore() {
-  return getRuleContexts<GrammaticSchemeParser::IgnoreContext>();
-}
-
-GrammaticSchemeParser::IgnoreContext* GrammaticSchemeParser::GrammaticContext::ignore(size_t i) {
-  return getRuleContext<GrammaticSchemeParser::IgnoreContext>(i);
-}
-
 std::vector<GrammaticSchemeParser::RulesContext *> GrammaticSchemeParser::GrammaticContext::rules() {
   return getRuleContexts<GrammaticSchemeParser::RulesContext>();
 }
@@ -96,51 +92,48 @@ GrammaticSchemeParser::GrammaticContext* GrammaticSchemeParser::grammatic() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(13);
+    setState(15);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == GrammaticSchemeParser::HEADER) {
       setState(12);
-      header();
+      dynamic_cast<GrammaticContext *>(_localctx)->headerContext = header();
+      _localctx->g.set_header(dynamic_cast<GrammaticContext *>(_localctx)->headerContext->header_text);
     }
-    setState(15);
-    start();
-    setState(21);
+    setState(17);
+    dynamic_cast<GrammaticContext *>(_localctx)->st = start();
+    _localctx->g.set_start(dynamic_cast<GrammaticContext *>(_localctx)->st->start_token);
+    setState(25); 
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << GrammaticSchemeParser::IGNORE)
-      | (1ULL << GrammaticSchemeParser::TERM)
-      | (1ULL << GrammaticSchemeParser::NTERM))) != 0)) {
-      setState(19);
+    do {
+      setState(25);
       _errHandler->sync(this);
       switch (_input->LA(1)) {
         case GrammaticSchemeParser::TERM: {
-          setState(16);
-          lexem();
-          break;
-        }
-
-        case GrammaticSchemeParser::IGNORE: {
-          setState(17);
-          ignore();
+          setState(19);
+          dynamic_cast<GrammaticContext *>(_localctx)->lexemContext = lexem();
+          _localctx->g.add_term(dynamic_cast<GrammaticContext *>(_localctx)->lexemContext->term, dynamic_cast<GrammaticContext *>(_localctx)->lexemContext->ignore);
           break;
         }
 
         case GrammaticSchemeParser::NTERM: {
-          setState(18);
-          rules();
+          setState(22);
+          dynamic_cast<GrammaticContext *>(_localctx)->rulesContext = rules();
+          _localctx->g.add_non_term(std::move(dynamic_cast<GrammaticContext *>(_localctx)->rulesContext->nterm));
           break;
         }
 
       default:
         throw NoViableAltException(this);
       }
-      setState(23);
+      setState(27); 
       _errHandler->sync(this);
       _la = _input->LA(1);
-    }
+    } while (_la == GrammaticSchemeParser::TERM
+
+    || _la == GrammaticSchemeParser::NTERM);
    
   }
   catch (RecognitionException &e) {
@@ -196,12 +189,13 @@ GrammaticSchemeParser::StartContext* GrammaticSchemeParser::start() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(24);
+    setState(29);
     match(GrammaticSchemeParser::START);
-    setState(25);
-    match(GrammaticSchemeParser::NTERM);
-    setState(26);
+    setState(30);
+    dynamic_cast<StartContext *>(_localctx)->ntermToken = match(GrammaticSchemeParser::NTERM);
+    setState(31);
     match(GrammaticSchemeParser::SCOLON);
+    dynamic_cast<StartContext *>(_localctx)->start_token =  (dynamic_cast<StartContext *>(_localctx)->ntermToken != nullptr ? dynamic_cast<StartContext *>(_localctx)->ntermToken->getText() : "");
    
   }
   catch (RecognitionException &e) {
@@ -257,12 +251,13 @@ GrammaticSchemeParser::HeaderContext* GrammaticSchemeParser::header() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(28);
+    setState(34);
     match(GrammaticSchemeParser::HEADER);
-    setState(29);
-    match(GrammaticSchemeParser::CODE);
-    setState(30);
+    setState(35);
+    dynamic_cast<HeaderContext *>(_localctx)->codeToken = match(GrammaticSchemeParser::CODE);
+    setState(36);
     match(GrammaticSchemeParser::SCOLON);
+    dynamic_cast<HeaderContext *>(_localctx)->header_text =  (dynamic_cast<HeaderContext *>(_localctx)->codeToken != nullptr ? dynamic_cast<HeaderContext *>(_localctx)->codeToken->getText() : "").substr(1, (dynamic_cast<HeaderContext *>(_localctx)->codeToken != nullptr ? dynamic_cast<HeaderContext *>(_localctx)->codeToken->getText() : "").size() - 2);
    
   }
   catch (RecognitionException &e) {
@@ -296,6 +291,10 @@ tree::TerminalNode* GrammaticSchemeParser::LexemContext::SCOLON() {
   return getToken(GrammaticSchemeParser::SCOLON, 0);
 }
 
+tree::TerminalNode* GrammaticSchemeParser::LexemContext::IGNORE() {
+  return getToken(GrammaticSchemeParser::IGNORE, 0);
+}
+
 
 size_t GrammaticSchemeParser::LexemContext::getRuleIndex() const {
   return GrammaticSchemeParser::RuleLexem;
@@ -316,81 +315,32 @@ void GrammaticSchemeParser::LexemContext::exitRule(tree::ParseTreeListener *list
 GrammaticSchemeParser::LexemContext* GrammaticSchemeParser::lexem() {
   LexemContext *_localctx = _tracker.createInstance<LexemContext>(_ctx, getState());
   enterRule(_localctx, 6, GrammaticSchemeParser::RuleLexem);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(32);
-    match(GrammaticSchemeParser::TERM);
-    setState(33);
+    dynamic_cast<LexemContext *>(_localctx)->ignore =  false;
+    setState(40);
+    dynamic_cast<LexemContext *>(_localctx)->termToken = match(GrammaticSchemeParser::TERM);
+    setState(41);
     match(GrammaticSchemeParser::COLON);
-    setState(34);
-    match(GrammaticSchemeParser::STRING);
-    setState(35);
+    setState(42);
+    dynamic_cast<LexemContext *>(_localctx)->stringToken = match(GrammaticSchemeParser::STRING);
+    setState(45);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (_la == GrammaticSchemeParser::IGNORE) {
+      setState(43);
+      match(GrammaticSchemeParser::IGNORE);
+      dynamic_cast<LexemContext *>(_localctx)->ignore =  true;
+    }
+    setState(47);
     match(GrammaticSchemeParser::SCOLON);
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- IgnoreContext ------------------------------------------------------------------
-
-GrammaticSchemeParser::IgnoreContext::IgnoreContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* GrammaticSchemeParser::IgnoreContext::IGNORE() {
-  return getToken(GrammaticSchemeParser::IGNORE, 0);
-}
-
-tree::TerminalNode* GrammaticSchemeParser::IgnoreContext::TERM() {
-  return getToken(GrammaticSchemeParser::TERM, 0);
-}
-
-tree::TerminalNode* GrammaticSchemeParser::IgnoreContext::SCOLON() {
-  return getToken(GrammaticSchemeParser::SCOLON, 0);
-}
-
-
-size_t GrammaticSchemeParser::IgnoreContext::getRuleIndex() const {
-  return GrammaticSchemeParser::RuleIgnore;
-}
-
-void GrammaticSchemeParser::IgnoreContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<GrammaticSchemeListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterIgnore(this);
-}
-
-void GrammaticSchemeParser::IgnoreContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<GrammaticSchemeListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitIgnore(this);
-}
-
-GrammaticSchemeParser::IgnoreContext* GrammaticSchemeParser::ignore() {
-  IgnoreContext *_localctx = _tracker.createInstance<IgnoreContext>(_ctx, getState());
-  enterRule(_localctx, 8, GrammaticSchemeParser::RuleIgnore);
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(37);
-    match(GrammaticSchemeParser::IGNORE);
-    setState(38);
-    match(GrammaticSchemeParser::TERM);
-    setState(39);
-    match(GrammaticSchemeParser::SCOLON);
+    dynamic_cast<LexemContext *>(_localctx)->term =  term_t((dynamic_cast<LexemContext *>(_localctx)->termToken != nullptr ? dynamic_cast<LexemContext *>(_localctx)->termToken->getText() : ""), (dynamic_cast<LexemContext *>(_localctx)->stringToken != nullptr ? dynamic_cast<LexemContext *>(_localctx)->stringToken->getText() : "").substr(1, (dynamic_cast<LexemContext *>(_localctx)->stringToken != nullptr ? dynamic_cast<LexemContext *>(_localctx)->stringToken->getText() : "").size() - 2));
    
   }
   catch (RecognitionException &e) {
@@ -408,12 +358,8 @@ GrammaticSchemeParser::RulesContext::RulesContext(ParserRuleContext *parent, siz
   : ParserRuleContext(parent, invokingState) {
 }
 
-std::vector<tree::TerminalNode *> GrammaticSchemeParser::RulesContext::NTERM() {
-  return getTokens(GrammaticSchemeParser::NTERM);
-}
-
-tree::TerminalNode* GrammaticSchemeParser::RulesContext::NTERM(size_t i) {
-  return getToken(GrammaticSchemeParser::NTERM, i);
+tree::TerminalNode* GrammaticSchemeParser::RulesContext::NTERM() {
+  return getToken(GrammaticSchemeParser::NTERM, 0);
 }
 
 tree::TerminalNode* GrammaticSchemeParser::RulesContext::COLON() {
@@ -422,6 +368,14 @@ tree::TerminalNode* GrammaticSchemeParser::RulesContext::COLON() {
 
 tree::TerminalNode* GrammaticSchemeParser::RulesContext::SCOLON() {
   return getToken(GrammaticSchemeParser::SCOLON, 0);
+}
+
+std::vector<GrammaticSchemeParser::One_ruleContext *> GrammaticSchemeParser::RulesContext::one_rule() {
+  return getRuleContexts<GrammaticSchemeParser::One_ruleContext>();
+}
+
+GrammaticSchemeParser::One_ruleContext* GrammaticSchemeParser::RulesContext::one_rule(size_t i) {
+  return getRuleContext<GrammaticSchemeParser::One_ruleContext>(i);
 }
 
 std::vector<tree::TerminalNode *> GrammaticSchemeParser::RulesContext::ATTR() {
@@ -434,22 +388,6 @@ tree::TerminalNode* GrammaticSchemeParser::RulesContext::ATTR(size_t i) {
 
 tree::TerminalNode* GrammaticSchemeParser::RulesContext::RETURS() {
   return getToken(GrammaticSchemeParser::RETURS, 0);
-}
-
-std::vector<tree::TerminalNode *> GrammaticSchemeParser::RulesContext::TERM() {
-  return getTokens(GrammaticSchemeParser::TERM);
-}
-
-tree::TerminalNode* GrammaticSchemeParser::RulesContext::TERM(size_t i) {
-  return getToken(GrammaticSchemeParser::TERM, i);
-}
-
-std::vector<tree::TerminalNode *> GrammaticSchemeParser::RulesContext::CODE() {
-  return getTokens(GrammaticSchemeParser::CODE);
-}
-
-tree::TerminalNode* GrammaticSchemeParser::RulesContext::CODE(size_t i) {
-  return getToken(GrammaticSchemeParser::CODE, i);
 }
 
 std::vector<tree::TerminalNode *> GrammaticSchemeParser::RulesContext::STICK() {
@@ -479,7 +417,7 @@ void GrammaticSchemeParser::RulesContext::exitRule(tree::ParseTreeListener *list
 
 GrammaticSchemeParser::RulesContext* GrammaticSchemeParser::rules() {
   RulesContext *_localctx = _tracker.createInstance<RulesContext>(_ctx, getState());
-  enterRule(_localctx, 10, GrammaticSchemeParser::RuleRules);
+  enterRule(_localctx, 8, GrammaticSchemeParser::RuleRules);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -487,127 +425,173 @@ GrammaticSchemeParser::RulesContext* GrammaticSchemeParser::rules() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(41);
-    match(GrammaticSchemeParser::NTERM);
-    setState(43);
+    setState(50);
+    dynamic_cast<RulesContext *>(_localctx)->ntermToken = match(GrammaticSchemeParser::NTERM);
+    dynamic_cast<RulesContext *>(_localctx)->nterm =  non_term_t((dynamic_cast<RulesContext *>(_localctx)->ntermToken != nullptr ? dynamic_cast<RulesContext *>(_localctx)->ntermToken->getText() : "")); 
+    setState(54);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == GrammaticSchemeParser::ATTR) {
-      setState(42);
-      match(GrammaticSchemeParser::ATTR);
+      setState(52);
+      dynamic_cast<RulesContext *>(_localctx)->attrToken = match(GrammaticSchemeParser::ATTR);
+      _localctx->nterm.args = (dynamic_cast<RulesContext *>(_localctx)->attrToken != nullptr ? dynamic_cast<RulesContext *>(_localctx)->attrToken->getText() : "").substr(1, (dynamic_cast<RulesContext *>(_localctx)->attrToken != nullptr ? dynamic_cast<RulesContext *>(_localctx)->attrToken->getText() : "").size() - 2);
     }
-    setState(47);
+    setState(59);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == GrammaticSchemeParser::RETURS) {
-      setState(45);
+      setState(56);
       match(GrammaticSchemeParser::RETURS);
-      setState(46);
-      match(GrammaticSchemeParser::ATTR);
+      setState(57);
+      dynamic_cast<RulesContext *>(_localctx)->attrToken = match(GrammaticSchemeParser::ATTR);
+      _localctx->nterm.returns = (dynamic_cast<RulesContext *>(_localctx)->attrToken != nullptr ? dynamic_cast<RulesContext *>(_localctx)->attrToken->getText() : "").substr(1, (dynamic_cast<RulesContext *>(_localctx)->attrToken != nullptr ? dynamic_cast<RulesContext *>(_localctx)->attrToken->getText() : "").size() - 2);
     }
-    setState(49);
+    setState(61);
     match(GrammaticSchemeParser::COLON);
 
-    setState(56); 
+    setState(62);
+    dynamic_cast<RulesContext *>(_localctx)->one_ruleContext = one_rule();
+    _localctx->nterm.add_rule(std::move(dynamic_cast<RulesContext *>(_localctx)->one_ruleContext->rule));
+    setState(70);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == GrammaticSchemeParser::STICK) {
+      setState(64);
+      match(GrammaticSchemeParser::STICK);
+      setState(65);
+      dynamic_cast<RulesContext *>(_localctx)->one_ruleContext = one_rule();
+      _localctx->nterm.add_rule(std::move(dynamic_cast<RulesContext *>(_localctx)->one_ruleContext->rule));
+      setState(72);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(73);
+    match(GrammaticSchemeParser::SCOLON);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- One_ruleContext ------------------------------------------------------------------
+
+GrammaticSchemeParser::One_ruleContext::One_ruleContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<tree::TerminalNode *> GrammaticSchemeParser::One_ruleContext::TERM() {
+  return getTokens(GrammaticSchemeParser::TERM);
+}
+
+tree::TerminalNode* GrammaticSchemeParser::One_ruleContext::TERM(size_t i) {
+  return getToken(GrammaticSchemeParser::TERM, i);
+}
+
+std::vector<tree::TerminalNode *> GrammaticSchemeParser::One_ruleContext::NTERM() {
+  return getTokens(GrammaticSchemeParser::NTERM);
+}
+
+tree::TerminalNode* GrammaticSchemeParser::One_ruleContext::NTERM(size_t i) {
+  return getToken(GrammaticSchemeParser::NTERM, i);
+}
+
+std::vector<tree::TerminalNode *> GrammaticSchemeParser::One_ruleContext::CODE() {
+  return getTokens(GrammaticSchemeParser::CODE);
+}
+
+tree::TerminalNode* GrammaticSchemeParser::One_ruleContext::CODE(size_t i) {
+  return getToken(GrammaticSchemeParser::CODE, i);
+}
+
+std::vector<tree::TerminalNode *> GrammaticSchemeParser::One_ruleContext::ATTR() {
+  return getTokens(GrammaticSchemeParser::ATTR);
+}
+
+tree::TerminalNode* GrammaticSchemeParser::One_ruleContext::ATTR(size_t i) {
+  return getToken(GrammaticSchemeParser::ATTR, i);
+}
+
+
+size_t GrammaticSchemeParser::One_ruleContext::getRuleIndex() const {
+  return GrammaticSchemeParser::RuleOne_rule;
+}
+
+void GrammaticSchemeParser::One_ruleContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<GrammaticSchemeListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterOne_rule(this);
+}
+
+void GrammaticSchemeParser::One_ruleContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<GrammaticSchemeListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitOne_rule(this);
+}
+
+GrammaticSchemeParser::One_ruleContext* GrammaticSchemeParser::one_rule() {
+  One_ruleContext *_localctx = _tracker.createInstance<One_ruleContext>(_ctx, getState());
+  enterRule(_localctx, 10, GrammaticSchemeParser::RuleOne_rule);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(85); 
     _errHandler->sync(this);
     _la = _input->LA(1);
     do {
-      setState(56);
+      setState(85);
       _errHandler->sync(this);
       switch (_input->LA(1)) {
         case GrammaticSchemeParser::TERM: {
-          setState(50);
-          match(GrammaticSchemeParser::TERM);
+          setState(75);
+          dynamic_cast<One_ruleContext *>(_localctx)->termToken = match(GrammaticSchemeParser::TERM);
+          _localctx->rule.emplace_back((dynamic_cast<One_ruleContext *>(_localctx)->termToken != nullptr ? dynamic_cast<One_ruleContext *>(_localctx)->termToken->getText() : ""));
           break;
         }
 
         case GrammaticSchemeParser::NTERM: {
-          setState(51);
-          match(GrammaticSchemeParser::NTERM);
-          setState(53);
+          setState(77);
+          dynamic_cast<One_ruleContext *>(_localctx)->ntermToken = match(GrammaticSchemeParser::NTERM);
+          _localctx->rule.emplace_back((dynamic_cast<One_ruleContext *>(_localctx)->ntermToken != nullptr ? dynamic_cast<One_ruleContext *>(_localctx)->ntermToken->getText() : ""));
+          setState(81);
           _errHandler->sync(this);
 
           _la = _input->LA(1);
           if (_la == GrammaticSchemeParser::ATTR) {
-            setState(52);
-            match(GrammaticSchemeParser::ATTR);
+            setState(79);
+            dynamic_cast<One_ruleContext *>(_localctx)->attrToken = match(GrammaticSchemeParser::ATTR);
+            _localctx->rule.back().code = (dynamic_cast<One_ruleContext *>(_localctx)->attrToken != nullptr ? dynamic_cast<One_ruleContext *>(_localctx)->attrToken->getText() : "").substr(1, (dynamic_cast<One_ruleContext *>(_localctx)->attrToken != nullptr ? dynamic_cast<One_ruleContext *>(_localctx)->attrToken->getText() : "").size() - 2);
           }
           break;
         }
 
         case GrammaticSchemeParser::CODE: {
-          setState(55);
-          match(GrammaticSchemeParser::CODE);
+          setState(83);
+          dynamic_cast<One_ruleContext *>(_localctx)->codeToken = match(GrammaticSchemeParser::CODE);
+          _localctx->rule.emplace_back("#", (dynamic_cast<One_ruleContext *>(_localctx)->codeToken != nullptr ? dynamic_cast<One_ruleContext *>(_localctx)->codeToken->getText() : "").substr(1, (dynamic_cast<One_ruleContext *>(_localctx)->codeToken != nullptr ? dynamic_cast<One_ruleContext *>(_localctx)->codeToken->getText() : "").size() - 2));
           break;
         }
 
       default:
         throw NoViableAltException(this);
       }
-      setState(58); 
+      setState(87); 
       _errHandler->sync(this);
       _la = _input->LA(1);
     } while ((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << GrammaticSchemeParser::TERM)
       | (1ULL << GrammaticSchemeParser::NTERM)
       | (1ULL << GrammaticSchemeParser::CODE))) != 0));
-    setState(73);
-    _errHandler->sync(this);
-    _la = _input->LA(1);
-    while (_la == GrammaticSchemeParser::STICK) {
-      setState(60);
-      match(GrammaticSchemeParser::STICK);
-      setState(67); 
-      _errHandler->sync(this);
-      _la = _input->LA(1);
-      do {
-        setState(67);
-        _errHandler->sync(this);
-        switch (_input->LA(1)) {
-          case GrammaticSchemeParser::TERM: {
-            setState(61);
-            match(GrammaticSchemeParser::TERM);
-            break;
-          }
-
-          case GrammaticSchemeParser::NTERM: {
-            setState(62);
-            match(GrammaticSchemeParser::NTERM);
-            setState(64);
-            _errHandler->sync(this);
-
-            _la = _input->LA(1);
-            if (_la == GrammaticSchemeParser::ATTR) {
-              setState(63);
-              match(GrammaticSchemeParser::ATTR);
-            }
-            break;
-          }
-
-          case GrammaticSchemeParser::CODE: {
-            setState(66);
-            match(GrammaticSchemeParser::CODE);
-            break;
-          }
-
-        default:
-          throw NoViableAltException(this);
-        }
-        setState(69); 
-        _errHandler->sync(this);
-        _la = _input->LA(1);
-      } while ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & ((1ULL << GrammaticSchemeParser::TERM)
-        | (1ULL << GrammaticSchemeParser::NTERM)
-        | (1ULL << GrammaticSchemeParser::CODE))) != 0));
-      setState(75);
-      _errHandler->sync(this);
-      _la = _input->LA(1);
-    }
-    setState(76);
-    match(GrammaticSchemeParser::SCOLON);
    
   }
   catch (RecognitionException &e) {
@@ -628,7 +612,7 @@ atn::ATN GrammaticSchemeParser::_atn;
 std::vector<uint16_t> GrammaticSchemeParser::_serializedATN;
 
 std::vector<std::string> GrammaticSchemeParser::_ruleNames = {
-  "grammatic", "start", "header", "lexem", "ignore", "rules"
+  "grammatic", "start", "header", "lexem", "rules", "one_rule"
 };
 
 std::vector<std::string> GrammaticSchemeParser::_literalNames = {
@@ -663,61 +647,65 @@ GrammaticSchemeParser::Initializer::Initializer() {
 
   _serializedATN = {
     0x3, 0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 
-    0x3, 0x18, 0x51, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 0x9, 
+    0x3, 0x18, 0x5c, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 0x9, 
     0x4, 0x4, 0x5, 0x9, 0x5, 0x4, 0x6, 0x9, 0x6, 0x4, 0x7, 0x9, 0x7, 0x3, 
-    0x2, 0x5, 0x2, 0x10, 0xa, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 
-    0x7, 0x2, 0x16, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 0x19, 0xb, 0x2, 0x3, 0x3, 
-    0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
-    0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x6, 0x3, 0x6, 
-    0x3, 0x6, 0x3, 0x6, 0x3, 0x7, 0x3, 0x7, 0x5, 0x7, 0x2e, 0xa, 0x7, 0x3, 
-    0x7, 0x3, 0x7, 0x5, 0x7, 0x32, 0xa, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 
-    0x3, 0x7, 0x5, 0x7, 0x38, 0xa, 0x7, 0x3, 0x7, 0x6, 0x7, 0x3b, 0xa, 0x7, 
-    0xd, 0x7, 0xe, 0x7, 0x3c, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x5, 
-    0x7, 0x43, 0xa, 0x7, 0x3, 0x7, 0x6, 0x7, 0x46, 0xa, 0x7, 0xd, 0x7, 0xe, 
-    0x7, 0x47, 0x7, 0x7, 0x4a, 0xa, 0x7, 0xc, 0x7, 0xe, 0x7, 0x4d, 0xb, 
-    0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x2, 0x2, 0x8, 0x2, 0x4, 0x6, 0x8, 
-    0xa, 0xc, 0x2, 0x2, 0x2, 0x59, 0x2, 0xf, 0x3, 0x2, 0x2, 0x2, 0x4, 0x1a, 
-    0x3, 0x2, 0x2, 0x2, 0x6, 0x1e, 0x3, 0x2, 0x2, 0x2, 0x8, 0x22, 0x3, 0x2, 
-    0x2, 0x2, 0xa, 0x27, 0x3, 0x2, 0x2, 0x2, 0xc, 0x2b, 0x3, 0x2, 0x2, 0x2, 
-    0xe, 0x10, 0x5, 0x6, 0x4, 0x2, 0xf, 0xe, 0x3, 0x2, 0x2, 0x2, 0xf, 0x10, 
-    0x3, 0x2, 0x2, 0x2, 0x10, 0x11, 0x3, 0x2, 0x2, 0x2, 0x11, 0x17, 0x5, 
-    0x4, 0x3, 0x2, 0x12, 0x16, 0x5, 0x8, 0x5, 0x2, 0x13, 0x16, 0x5, 0xa, 
-    0x6, 0x2, 0x14, 0x16, 0x5, 0xc, 0x7, 0x2, 0x15, 0x12, 0x3, 0x2, 0x2, 
-    0x2, 0x15, 0x13, 0x3, 0x2, 0x2, 0x2, 0x15, 0x14, 0x3, 0x2, 0x2, 0x2, 
-    0x16, 0x19, 0x3, 0x2, 0x2, 0x2, 0x17, 0x15, 0x3, 0x2, 0x2, 0x2, 0x17, 
-    0x18, 0x3, 0x2, 0x2, 0x2, 0x18, 0x3, 0x3, 0x2, 0x2, 0x2, 0x19, 0x17, 
-    0x3, 0x2, 0x2, 0x2, 0x1a, 0x1b, 0x7, 0x6, 0x2, 0x2, 0x1b, 0x1c, 0x7, 
-    0x8, 0x2, 0x2, 0x1c, 0x1d, 0x7, 0x10, 0x2, 0x2, 0x1d, 0x5, 0x3, 0x2, 
-    0x2, 0x2, 0x1e, 0x1f, 0x7, 0x3, 0x2, 0x2, 0x1f, 0x20, 0x7, 0xa, 0x2, 
-    0x2, 0x20, 0x21, 0x7, 0x10, 0x2, 0x2, 0x21, 0x7, 0x3, 0x2, 0x2, 0x2, 
-    0x22, 0x23, 0x7, 0x7, 0x2, 0x2, 0x23, 0x24, 0x7, 0xe, 0x2, 0x2, 0x24, 
-    0x25, 0x7, 0xb, 0x2, 0x2, 0x25, 0x26, 0x7, 0x10, 0x2, 0x2, 0x26, 0x9, 
-    0x3, 0x2, 0x2, 0x2, 0x27, 0x28, 0x7, 0x4, 0x2, 0x2, 0x28, 0x29, 0x7, 
-    0x7, 0x2, 0x2, 0x29, 0x2a, 0x7, 0x10, 0x2, 0x2, 0x2a, 0xb, 0x3, 0x2, 
-    0x2, 0x2, 0x2b, 0x2d, 0x7, 0x8, 0x2, 0x2, 0x2c, 0x2e, 0x7, 0xc, 0x2, 
-    0x2, 0x2d, 0x2c, 0x3, 0x2, 0x2, 0x2, 0x2d, 0x2e, 0x3, 0x2, 0x2, 0x2, 
-    0x2e, 0x31, 0x3, 0x2, 0x2, 0x2, 0x2f, 0x30, 0x7, 0x5, 0x2, 0x2, 0x30, 
-    0x32, 0x7, 0xc, 0x2, 0x2, 0x31, 0x2f, 0x3, 0x2, 0x2, 0x2, 0x31, 0x32, 
-    0x3, 0x2, 0x2, 0x2, 0x32, 0x33, 0x3, 0x2, 0x2, 0x2, 0x33, 0x3a, 0x7, 
-    0xe, 0x2, 0x2, 0x34, 0x3b, 0x7, 0x7, 0x2, 0x2, 0x35, 0x37, 0x7, 0x8, 
-    0x2, 0x2, 0x36, 0x38, 0x7, 0xc, 0x2, 0x2, 0x37, 0x36, 0x3, 0x2, 0x2, 
-    0x2, 0x37, 0x38, 0x3, 0x2, 0x2, 0x2, 0x38, 0x3b, 0x3, 0x2, 0x2, 0x2, 
-    0x39, 0x3b, 0x7, 0xa, 0x2, 0x2, 0x3a, 0x34, 0x3, 0x2, 0x2, 0x2, 0x3a, 
-    0x35, 0x3, 0x2, 0x2, 0x2, 0x3a, 0x39, 0x3, 0x2, 0x2, 0x2, 0x3b, 0x3c, 
-    0x3, 0x2, 0x2, 0x2, 0x3c, 0x3a, 0x3, 0x2, 0x2, 0x2, 0x3c, 0x3d, 0x3, 
-    0x2, 0x2, 0x2, 0x3d, 0x4b, 0x3, 0x2, 0x2, 0x2, 0x3e, 0x45, 0x7, 0x12, 
-    0x2, 0x2, 0x3f, 0x46, 0x7, 0x7, 0x2, 0x2, 0x40, 0x42, 0x7, 0x8, 0x2, 
-    0x2, 0x41, 0x43, 0x7, 0xc, 0x2, 0x2, 0x42, 0x41, 0x3, 0x2, 0x2, 0x2, 
-    0x42, 0x43, 0x3, 0x2, 0x2, 0x2, 0x43, 0x46, 0x3, 0x2, 0x2, 0x2, 0x44, 
-    0x46, 0x7, 0xa, 0x2, 0x2, 0x45, 0x3f, 0x3, 0x2, 0x2, 0x2, 0x45, 0x40, 
-    0x3, 0x2, 0x2, 0x2, 0x45, 0x44, 0x3, 0x2, 0x2, 0x2, 0x46, 0x47, 0x3, 
-    0x2, 0x2, 0x2, 0x47, 0x45, 0x3, 0x2, 0x2, 0x2, 0x47, 0x48, 0x3, 0x2, 
-    0x2, 0x2, 0x48, 0x4a, 0x3, 0x2, 0x2, 0x2, 0x49, 0x3e, 0x3, 0x2, 0x2, 
-    0x2, 0x4a, 0x4d, 0x3, 0x2, 0x2, 0x2, 0x4b, 0x49, 0x3, 0x2, 0x2, 0x2, 
-    0x4b, 0x4c, 0x3, 0x2, 0x2, 0x2, 0x4c, 0x4e, 0x3, 0x2, 0x2, 0x2, 0x4d, 
-    0x4b, 0x3, 0x2, 0x2, 0x2, 0x4e, 0x4f, 0x7, 0x10, 0x2, 0x2, 0x4f, 0xd, 
-    0x3, 0x2, 0x2, 0x2, 0xe, 0xf, 0x15, 0x17, 0x2d, 0x31, 0x37, 0x3a, 0x3c, 
-    0x42, 0x45, 0x47, 0x4b, 
+    0x2, 0x3, 0x2, 0x3, 0x2, 0x5, 0x2, 0x12, 0xa, 0x2, 0x3, 0x2, 0x3, 0x2, 
+    0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x6, 0x2, 
+    0x1c, 0xa, 0x2, 0xd, 0x2, 0xe, 0x2, 0x1d, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 
+    0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
+    0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x5, 0x5, 
+    0x30, 0xa, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x6, 0x3, 0x6, 0x3, 
+    0x6, 0x3, 0x6, 0x5, 0x6, 0x39, 0xa, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 
+    0x5, 0x6, 0x3e, 0xa, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 
+    0x6, 0x3, 0x6, 0x3, 0x6, 0x7, 0x6, 0x47, 0xa, 0x6, 0xc, 0x6, 0xe, 0x6, 
+    0x4a, 0xb, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 
+    0x7, 0x3, 0x7, 0x3, 0x7, 0x5, 0x7, 0x54, 0xa, 0x7, 0x3, 0x7, 0x3, 0x7, 
+    0x6, 0x7, 0x58, 0xa, 0x7, 0xd, 0x7, 0xe, 0x7, 0x59, 0x3, 0x7, 0x2, 0x2, 
+    0x8, 0x2, 0x4, 0x6, 0x8, 0xa, 0xc, 0x2, 0x2, 0x2, 0x60, 0x2, 0x11, 0x3, 
+    0x2, 0x2, 0x2, 0x4, 0x1f, 0x3, 0x2, 0x2, 0x2, 0x6, 0x24, 0x3, 0x2, 0x2, 
+    0x2, 0x8, 0x29, 0x3, 0x2, 0x2, 0x2, 0xa, 0x34, 0x3, 0x2, 0x2, 0x2, 0xc, 
+    0x57, 0x3, 0x2, 0x2, 0x2, 0xe, 0xf, 0x5, 0x6, 0x4, 0x2, 0xf, 0x10, 0x8, 
+    0x2, 0x1, 0x2, 0x10, 0x12, 0x3, 0x2, 0x2, 0x2, 0x11, 0xe, 0x3, 0x2, 
+    0x2, 0x2, 0x11, 0x12, 0x3, 0x2, 0x2, 0x2, 0x12, 0x13, 0x3, 0x2, 0x2, 
+    0x2, 0x13, 0x14, 0x5, 0x4, 0x3, 0x2, 0x14, 0x1b, 0x8, 0x2, 0x1, 0x2, 
+    0x15, 0x16, 0x5, 0x8, 0x5, 0x2, 0x16, 0x17, 0x8, 0x2, 0x1, 0x2, 0x17, 
+    0x1c, 0x3, 0x2, 0x2, 0x2, 0x18, 0x19, 0x5, 0xa, 0x6, 0x2, 0x19, 0x1a, 
+    0x8, 0x2, 0x1, 0x2, 0x1a, 0x1c, 0x3, 0x2, 0x2, 0x2, 0x1b, 0x15, 0x3, 
+    0x2, 0x2, 0x2, 0x1b, 0x18, 0x3, 0x2, 0x2, 0x2, 0x1c, 0x1d, 0x3, 0x2, 
+    0x2, 0x2, 0x1d, 0x1b, 0x3, 0x2, 0x2, 0x2, 0x1d, 0x1e, 0x3, 0x2, 0x2, 
+    0x2, 0x1e, 0x3, 0x3, 0x2, 0x2, 0x2, 0x1f, 0x20, 0x7, 0x6, 0x2, 0x2, 
+    0x20, 0x21, 0x7, 0x8, 0x2, 0x2, 0x21, 0x22, 0x7, 0x10, 0x2, 0x2, 0x22, 
+    0x23, 0x8, 0x3, 0x1, 0x2, 0x23, 0x5, 0x3, 0x2, 0x2, 0x2, 0x24, 0x25, 
+    0x7, 0x3, 0x2, 0x2, 0x25, 0x26, 0x7, 0xa, 0x2, 0x2, 0x26, 0x27, 0x7, 
+    0x10, 0x2, 0x2, 0x27, 0x28, 0x8, 0x4, 0x1, 0x2, 0x28, 0x7, 0x3, 0x2, 
+    0x2, 0x2, 0x29, 0x2a, 0x8, 0x5, 0x1, 0x2, 0x2a, 0x2b, 0x7, 0x7, 0x2, 
+    0x2, 0x2b, 0x2c, 0x7, 0xe, 0x2, 0x2, 0x2c, 0x2f, 0x7, 0xb, 0x2, 0x2, 
+    0x2d, 0x2e, 0x7, 0x4, 0x2, 0x2, 0x2e, 0x30, 0x8, 0x5, 0x1, 0x2, 0x2f, 
+    0x2d, 0x3, 0x2, 0x2, 0x2, 0x2f, 0x30, 0x3, 0x2, 0x2, 0x2, 0x30, 0x31, 
+    0x3, 0x2, 0x2, 0x2, 0x31, 0x32, 0x7, 0x10, 0x2, 0x2, 0x32, 0x33, 0x8, 
+    0x5, 0x1, 0x2, 0x33, 0x9, 0x3, 0x2, 0x2, 0x2, 0x34, 0x35, 0x7, 0x8, 
+    0x2, 0x2, 0x35, 0x38, 0x8, 0x6, 0x1, 0x2, 0x36, 0x37, 0x7, 0xc, 0x2, 
+    0x2, 0x37, 0x39, 0x8, 0x6, 0x1, 0x2, 0x38, 0x36, 0x3, 0x2, 0x2, 0x2, 
+    0x38, 0x39, 0x3, 0x2, 0x2, 0x2, 0x39, 0x3d, 0x3, 0x2, 0x2, 0x2, 0x3a, 
+    0x3b, 0x7, 0x5, 0x2, 0x2, 0x3b, 0x3c, 0x7, 0xc, 0x2, 0x2, 0x3c, 0x3e, 
+    0x8, 0x6, 0x1, 0x2, 0x3d, 0x3a, 0x3, 0x2, 0x2, 0x2, 0x3d, 0x3e, 0x3, 
+    0x2, 0x2, 0x2, 0x3e, 0x3f, 0x3, 0x2, 0x2, 0x2, 0x3f, 0x40, 0x7, 0xe, 
+    0x2, 0x2, 0x40, 0x41, 0x5, 0xc, 0x7, 0x2, 0x41, 0x48, 0x8, 0x6, 0x1, 
+    0x2, 0x42, 0x43, 0x7, 0x12, 0x2, 0x2, 0x43, 0x44, 0x5, 0xc, 0x7, 0x2, 
+    0x44, 0x45, 0x8, 0x6, 0x1, 0x2, 0x45, 0x47, 0x3, 0x2, 0x2, 0x2, 0x46, 
+    0x42, 0x3, 0x2, 0x2, 0x2, 0x47, 0x4a, 0x3, 0x2, 0x2, 0x2, 0x48, 0x46, 
+    0x3, 0x2, 0x2, 0x2, 0x48, 0x49, 0x3, 0x2, 0x2, 0x2, 0x49, 0x4b, 0x3, 
+    0x2, 0x2, 0x2, 0x4a, 0x48, 0x3, 0x2, 0x2, 0x2, 0x4b, 0x4c, 0x7, 0x10, 
+    0x2, 0x2, 0x4c, 0xb, 0x3, 0x2, 0x2, 0x2, 0x4d, 0x4e, 0x7, 0x7, 0x2, 
+    0x2, 0x4e, 0x58, 0x8, 0x7, 0x1, 0x2, 0x4f, 0x50, 0x7, 0x8, 0x2, 0x2, 
+    0x50, 0x53, 0x8, 0x7, 0x1, 0x2, 0x51, 0x52, 0x7, 0xc, 0x2, 0x2, 0x52, 
+    0x54, 0x8, 0x7, 0x1, 0x2, 0x53, 0x51, 0x3, 0x2, 0x2, 0x2, 0x53, 0x54, 
+    0x3, 0x2, 0x2, 0x2, 0x54, 0x58, 0x3, 0x2, 0x2, 0x2, 0x55, 0x56, 0x7, 
+    0xa, 0x2, 0x2, 0x56, 0x58, 0x8, 0x7, 0x1, 0x2, 0x57, 0x4d, 0x3, 0x2, 
+    0x2, 0x2, 0x57, 0x4f, 0x3, 0x2, 0x2, 0x2, 0x57, 0x55, 0x3, 0x2, 0x2, 
+    0x2, 0x58, 0x59, 0x3, 0x2, 0x2, 0x2, 0x59, 0x57, 0x3, 0x2, 0x2, 0x2, 
+    0x59, 0x5a, 0x3, 0x2, 0x2, 0x2, 0x5a, 0xd, 0x3, 0x2, 0x2, 0x2, 0xc, 
+    0x11, 0x1b, 0x1d, 0x2f, 0x38, 0x3d, 0x48, 0x53, 0x57, 0x59, 
   };
 
   atn::ATNDeserializer deserializer;

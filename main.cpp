@@ -1,18 +1,19 @@
+#include <fstream>
 #include <iostream>
-#include "antlr4-runtime.h"
-#include "antlr/GrammaticSchemeLexer.h"
-#include "antlr/GrammaticSchemeParser.h"
-#include "antlr/GrammaticSchemeBaseListener.h"
 
+#include "antlr4-runtime.h"
+#include "input_grammar/GrammaticSchemeLexer.h"
+#include "input_grammar/GrammaticSchemeParser.h"
 int main() {
-   std::ifstream in_file("sample.txt");
+   std::ifstream in_file;
+   in_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+   in_file.open("sample.txt");
 
    antlr4::ANTLRInputStream input(in_file);
    GrammaticSchemeLexer lexer(&input);
    antlr4::CommonTokenStream tokens(&lexer);
    GrammaticSchemeParser parser(&tokens);
+   grammatic_t g = parser.grammatic()->g;
 
-   antlr4::tree::ParseTree *ptree = parser.grammatic();
-   // ...
    return 0;
 }

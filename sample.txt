@@ -9,13 +9,11 @@ PLUS : "+";
 MINUS : "-";
 MUL : "*";
 DIV : "\";
-WS : "[ \t\r\n ]";
+WS : "[ \t\r\n ]" ignore;
 LP : "(";
 RP : ")";
 NUMBER : "[0-9]+";
 POW : "^";
-
-ignore WS;
 
 pm [int acc] returns [int val] : 
    pow[0] PLUS pm[$md.val + $acc] {$val = $pm.val;}
