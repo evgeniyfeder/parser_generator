@@ -3,7 +3,7 @@
 #include "../parser_generator/grammatic.h"
 
 
-// Generated from /home/efeder/work/itmo/mt/lab4/input_grammar/GrammaticScheme.g4 by ANTLR 4.7
+// Generated from /home/efeder/work/itmo/mt/lab4/input_grammar/GrammaticScheme.g4 by ANTLR 4.7.2
 
 #pragma once
 
@@ -16,10 +16,10 @@
 class  GrammaticSchemeLexer : public antlr4::Lexer {
 public:
   enum {
-    HEADER = 1, IGNORE = 2, RETURS = 3, START = 4, TERM = 5, NTERM = 6, 
-    WHITESPACE = 7, CODE = 8, STRING = 9, ATTR = 10, COMMA = 11, COLON = 12, 
-    DCOLON = 13, SCOLON = 14, EQ = 15, STICK = 16, LB = 17, RB = 18, LP = 19, 
-    RP = 20, LSQUARE = 21, RSQUARE = 22
+    HEADER = 1, IGNORE = 2, RETURS = 3, START = 4, EPS = 5, TERM = 6, NTERM = 7, 
+    WHITESPACE = 8, CODE = 9, STRING = 10, ATTR = 11, COMMA = 12, COLON = 13, 
+    DCOLON = 14, SCOLON = 15, EQ = 16, STICK = 17, LB = 18, RB = 19, LP = 20, 
+    RP = 21, LSQUARE = 22, RSQUARE = 23
   };
 
   GrammaticSchemeLexer(antlr4::CharStream *input);

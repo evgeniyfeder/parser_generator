@@ -26,16 +26,21 @@ rules returns [non_term_t nterm]: NTERM {$nterm = non_term_t($NTERM.text); }
 
 one_rule returns [rule_t rule] :
     (TERM {$rule.emplace_back($TERM.text);}
-    | NTERM {$rule.emplace_back($NTERM.text);} (ATTR {$rule.back().code = $ATTR.text.substr(1, $ATTR.text.size() - 2);} )?
-    | CODE {$rule.emplace_back("#", $CODE.text.substr(1, $CODE.text.size() - 2));})+;
+             | NTERM {$rule.emplace_back($NTERM.text);} (ATTR {$rule.back().code = $ATTR.text.substr(1, $ATTR.text.size() - 2);} )?)
+    (TERM {$rule.emplace_back($TERM.text);}
+        | NTERM {$rule.emplace_back($NTERM.text);} (ATTR {$rule.back().code = $ATTR.text.substr(1, $ATTR.text.size() - 2);} )?
+        | CODE {$rule.emplace_back("@code", $CODE.text.substr(1, $CODE.text.size() - 2));})*
+    | EPS {$rule.emplace_back("@eps");}
+      (CODE {$rule.emplace_back("@code", $CODE.text.substr(1, $CODE.text.size() - 2));})*;
 
 HEADER : 'header';
 IGNORE : 'ignore';
 RETURS : 'returns';
 START : 'start';
+EPS : 'EPS';
 
-TERM : [A-Z][A-Z_]+;
-NTERM : [a-z][a-z_]+;
+TERM : [A-Z][A-Z_]*;
+NTERM : [a-z][a-z_]*;
 WHITESPACE : [ \t\r\n]+ -> skip;
 
 CODE : LB .*? RB;

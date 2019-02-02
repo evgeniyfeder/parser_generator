@@ -15,18 +15,18 @@ RP : ")";
 NUMBER : "[0-9]+";
 POW : "^";
 
-pm [int acc] returns [int val] : 
-   pow[0] PLUS pm[$md.val + $acc] {$val = $pm.val;}
- | pow[0] MINUS pm[$md.val - $acc] {$val = $pm.val;} 
- | pow[0] {$val = $pm.val;};
+pm [int acc] returns [int] :
+   pow[0] PLUS pm[$md.out + $acc] {$out = $pm.out;}
+ | pow[0] MINUS pm[$md.out - $acc] {$out = $pm.out;}
+ | pow[0] {$out = $pm.out;};
 
-pow returns [int val]: 
-    var POW pow {$val = std::pow($var.val, $pow.val);}
-    | var {$val = $var.val;};
+pow returns [int]:
+    var POW pow {$out = std::pow($var.out, $pow.out);}
+    | var {$out = $var.out;};
     
-var returns [int val]: 
-    NUMBER {$val = $NUMBER.text;}
-    | LP pm RP {$val = pm.val;};
+var returns [int]:
+    NUMBER {$out = $NUMBER.out;}
+    | LP pm RP {$out = pm.out;};
 
 
 

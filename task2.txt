@@ -1,0 +1,21 @@
+start s;
+
+WS : "[ \t\r\n ]" ignore;
+OR : "or";
+XOR : "xor";
+AND : "and";
+NOT : "not";
+LETTER : "(true|false)";
+LP : "(";
+RP : ")";
+
+s : sh;
+sh : a ss;
+ss : OR a ss | EPS;
+a : b as;
+as : XOR b as | EPS;
+b : c bs;
+bs : AND c bs | EPS;
+c : NOT c | d;
+d : LETTER | LP sh RP
+
