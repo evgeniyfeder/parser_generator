@@ -1,0 +1,24 @@
+start e;
+
+NUMBER : "[0-9]+";
+PLUS : "[+]";
+MUL : "[*]";
+LP : "[(]";
+RP : "[)]";
+DIV : "/";
+MINUS : "-";
+WS : "[ \t\r\n ]" ignore;
+
+e returns [int]: t es[$t.out] { $out = $es.out; };
+
+es [int acc] returns [int] : PLUS t es[acc + $t.out] {$out = $es.out;}
+    | MINUS t es[acc - $t.out] {$out = $es.out;}
+    | EPS { $out = acc; };
+
+t returns [int] : f ts[$f.out] {$out = $ts.out;};
+
+ts [int acc] returns [int] : MUL f ts[acc * $f.out] {$out = $ts.out;}
+    | DIV f ts[acc / $f.out] {$out = $ts.out;}
+    | EPS { $out = acc; };
+
+f returns [int]: NUMBER {$out = std::stoi($NUMBER.out);} | LP e RP {$out = $e.out;};

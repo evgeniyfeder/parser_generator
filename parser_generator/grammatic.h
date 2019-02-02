@@ -16,7 +16,7 @@ public:
    grammatic_t & set_header(std::string const & header);
    grammatic_t & set_start(std::string const & start);
 
-   void finish();
+   void finish(std::filesystem::path const & directory);
 private:
 
    void count_first();

@@ -17,5 +17,5 @@ as : XOR b as | EPS;
 b : c bs;
 bs : AND c bs | EPS;
 c : NOT c | d;
-d : LETTER | LP sh RP
+d : LETTER | LP sh RP;
 

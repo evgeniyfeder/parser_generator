@@ -31,15 +31,14 @@ grammatic_t &grammatic_t::set_start(const std::string & start) {
    return *this;
 }
 
-void grammatic_t::finish() {
-   fs::path gen_dir = "gen";
-   fs::create_directory(gen_dir);
+void grammatic_t::finish(fs::path const & directory) {
+  fs::create_directories(directory);
 
    count_first();
    count_follow();
 
-   generate_lexer(gen_dir);
-   generate_parser(gen_dir);
+   generate_lexer(directory);
+   generate_parser(directory);
 }
 
 void grammatic_t::count_first() {
@@ -93,13 +92,13 @@ void grammatic_t::count_follow() {
 
          for (auto && rule : non_term.second->rules) {
             for (std::size_t i = 0; i < rule.size(); i++) {
-               if (rule[i].name == "@code" || std::isupper(rule[i].name[0]))
+               if (rule[i].name == "@eps" || rule[i].name == "@code" || std::isupper(rule[i].name[0]))
                   continue;
 
                auto fi = get_first_terms(rule, i + 1);
                std::size_t size = follow[rule[i].name].size();
 
-               if (fi.find("@eps") != fi.end()) {
+               if (fi.find("@eps") != fi.end() || fi.find("@end") != fi.end()) {
                   fi.erase("@eps");
                   follow[rule[i].name].insert(follow[left].begin(), follow[left].end());
                }
@@ -129,12 +128,11 @@ void grammatic_t::generate_lexer(const std::filesystem::path & directory) {
       h_file << term.second->name << ", ";
    }
    h_file << "END\n"
-          << "}\n"
+          << "};\n"
           << "class " << lclass_name << " {\n"
           << "public:\n"
-          << "   \n"
           << "   " << lclass_name << "();\n"
-          << "   update_input(std::string const & input);\n"
+          << "   void update_input(std::string const & input);\n"
           << "   void next_token();\n"
           << "   Token get_cur_token();\n"
           << "   std::string get_cur_token_string();\n"
@@ -145,17 +143,17 @@ void grammatic_t::generate_lexer(const std::filesystem::path & directory) {
           << "   std::string cur_token_str;\n"
           << "   std::size_t cur_pos;\n"
           << "   std::string input;\n"
-          << "   "
+          << "   \n"
           << "   std::unordered_set<Token> skips;\n"
           << "   std::array<std::regex, " << terms.size() << "> token_regexps;\n"
           << "   static const int token_num = " << terms.size() << ";\n"
           << "};";
 
    std::ofstream cpp_file(directory / (lclass_name + ".cpp"));
-
+   cpp_file << "#include <stdexcept>\n";
    cpp_file << "#include \"" << lclass_name + ".h" << "\"\n"
             << "\n"
-            << lclass_name << "::" << lclass_name << "(std::string const & input) : cur_pos(0) {";
+            << lclass_name << "::" << lclass_name << "() : cur_pos(0) {\n";
 
    if (skips.size() > 0) {
       cpp_file << "   skips = { ";
@@ -163,7 +161,7 @@ void grammatic_t::generate_lexer(const std::filesystem::path & directory) {
       for (auto it = skips.begin(); it != skips.end(); ++it) {
          auto copy = it;
          if (++copy == skips.end()) {
-            cpp_file << *it << "};\n\n";
+            cpp_file << *it << " };\n\n";
          } else {
             cpp_file << *it << ", ";
          }
@@ -171,11 +169,10 @@ void grammatic_t::generate_lexer(const std::filesystem::path & directory) {
    }
 
    for (auto && term : terms) {
-      cpp_file << "   token_regexps[" << term.second->name /* work because of enum */ << "] = std::regexp(\"^" /* add ^ for matching from begin of string */ << term.second->regexp << "\")\n";
+      cpp_file << "   token_regexps[" << term.second->name /* work because of enum */ << "] = std::regex(\"^" /* add ^ for matching from begin of string */ << term.second->regexp << "\");\n";
    }
 
-   cpp_file << "   next_token();\n"
-            << "}\n"
+   cpp_file << "}\n"
                "\n"
                "void " << lclass_name << "::update_input(std::string const &input) {\n"
                "   this->input = input;\n"
@@ -184,7 +181,7 @@ void grammatic_t::generate_lexer(const std::filesystem::path & directory) {
                "}\n"
             << "\n"
             << "void " << lclass_name << "::next_token() {\n"
-            << "   if (cur_pos >= token_num) {\n"
+            << "   if (input[cur_pos] == '$' && cur_pos == input.size() - 1) {\n"
             << "      cur_token = END;\n"
             << "      return;\n"
             << "   }\n"
@@ -203,18 +200,18 @@ void grammatic_t::generate_lexer(const std::filesystem::path & directory) {
                "         return;\n"
                "      }\n"
                "   }\n"
-               "   throw std::runtime_exception(std::string(\"Unexpected symbol \'\") + input[cur_pos] +  \"\' at position \" + (cur_pos + 1));\n"
+               "   throw std::runtime_error(std::string(\"Unexpected symbol \'\") + input[cur_pos] +  \"\' at position \" + std::to_string(cur_pos + 1));\n"
                "}\n"
                "\n"
             << "Token " << lclass_name + "::get_cur_token() { return cur_token; }\n"
-            << "std::string " << lclass_name + "::get_cur_token_string() { return cur_token_string; }\n"
+            << "std::string " << lclass_name + "::get_cur_token_string() { return cur_token_str; }\n"
             << "std::size_t " << lclass_name + "::get_cur_pos() { return cur_pos; }\n";
 }
 
 void grammatic_t::generate_parser(const std::filesystem::path & directory) {
    /* Copy tree realization */
-   fs::copy(fs::path("parser_generator/tree.h"), directory / ("tree.h"));
-   fs::copy(fs::path("parser_generator/tree.cpp"), directory / ("tree.cpp"));
+   fs::copy(fs::path("parser_generator/tree.h"), directory / ("tree.h"), fs::copy_options::overwrite_existing);
+   fs::copy(fs::path("parser_generator/tree.cpp"), directory / ("tree.cpp"), fs::copy_options::overwrite_existing);
 
    std::string pclass_name = (start + "_parser");
    std::string lclass_name = (start + "_lexer");
@@ -229,37 +226,39 @@ void grammatic_t::generate_parser(const std::filesystem::path & directory) {
              "public:\n";
 
    for (auto && nterm : non_terms) {
-      h_file << "   result<" + nterm.second->returns + "> " << nterm.first << "(" << nterm.second->args << ");";
+      h_file << "   result_t<" + nterm.second->returns + "> " << nterm.first << "(" << nterm.second->args << ");\n";
    }
    h_file << "   void update_input(std::string const & str);\n";
-   h_file << "   result<" + non_terms[start]->returns + "> parse();";
+   h_file << "   result_t<" + non_terms[start]->returns + "> parse();\n";
 
    h_file << "private:\n"
-             "   " << lclass_name << " lexer;\n";
+             "   " << lclass_name << " lexer;\n};\n";
 
    std::ofstream cpp_file(directory / (pclass_name + ".cpp"));
 
+   cpp_file << "#include <stdexcept>\n";
    cpp_file << "#include \"" + pclass_name + ".h\"\n"
-               "void " + pclass_name + "::update_input(std::string const & str) { lexer.update_input(str + '$'); }"
+               "void " + pclass_name + "::update_input(std::string const & str) { lexer.update_input(str + '$'); }\n"
 
 
 
-               "result<" + non_terms[start]->returns + "> " + pclass_name + "::parse() {\n"
+               "result_t<" + non_terms[start]->returns + "> " + pclass_name + "::parse() {\n"
                "   auto res = " + start + "();\n"
                "   if (lexer.get_cur_token() != END) {\n"
-               "      throw std::runtime_exceptrion(\"Unexpected end of input\");\n"
+               "      throw std::runtime_error(\"Unexpected end of input\");\n"
                "   }\n"
                "   return res;\n"
                "}\n\n";
 
    /* Generate term functions */
    for (auto && nterm : non_terms) {
-      std::string result_type = "result<" + nterm.second->returns + "> ";
+      std::string result_type = "result_t<" + nterm.second->returns + "> ";
       cpp_file << result_type << pclass_name << "::" + nterm.first << "(" << nterm.second->args << ") {\n"
-                  "   Token curToken = lexer.get_cur_token();"
+                  "   Token curToken = lexer.get_cur_token();\n"
                   "   " + result_type + " res;\n"
                   "   " + nterm.second->returns + " $out;\n"
-                  "   res.new_node = node_ptr(new node_t());\n"
+                  "   res.node = node_ptr(new node_t(\"" + nterm.first + "\"));\n"
+                  "\n"
                   "   switch (curToken) {\n   // first\n";
       bool need_follow = false;
       for (auto && term : first[nterm.first]) {
@@ -272,20 +271,30 @@ void grammatic_t::generate_parser(const std::filesystem::path & directory) {
 
          int32_t rule = find_rule(term, nterm.second);
          print_rule(nterm.second->rules[rule], cpp_file);
+         cpp_file << "      break;\n";
          cpp_file << "   }\n";
       }
       if (need_follow) {
          for (auto && term : follow[nterm.first]) {
-            cpp_file << "   case " + term + ":\n";
+            if (term == "@end")
+               cpp_file << "   case END:\n";
+            else
+               cpp_file << "   case " + term + ":\n";
          }
          cpp_file << "   {\n";
          int32_t rule = find_rule("@eps", nterm.second);
          print_rule(nterm.second->rules[rule], cpp_file);
+         cpp_file << "      break;\n";
          cpp_file << "   }\n";
       }
+      cpp_file << "   default:\n";
+      cpp_file << "      throw std::runtime_error(std::string(\"Unexpected token \'\") + lexer.get_cur_token_string() + \" at position \" + std::to_string(lexer.get_cur_pos()));\n";
+
+      cpp_file << "   }\n";
+      cpp_file << "   res.out = $out;\n"
+                  "   return res;\n"
+                  "}\n\n";
    }
-   cpp_file << "   res.out = $out;\n"
-               "   return res;";
 }
 
 int32_t grammatic_t::find_rule(const std::string & first_name, non_term_ptr const & nterm)
@@ -293,12 +302,21 @@ int32_t grammatic_t::find_rule(const std::string & first_name, non_term_ptr cons
    int32_t rule = -1;
    int32_t rules_size = static_cast<int32_t>(nterm->rules.size());
    for (int32_t i = 0; i < rules_size; i++) {
-      auto &f = first[nterm->rules[i][0].name];
-      if (f.find(first_name) != f.end()) {
-         if (rule != -1) {
-            throw std::runtime_error("Not LL1 grammatic");
+      if (std::islower(nterm->rules[i][0].name[0])) {
+         auto &f = first[nterm->rules[i][0].name];
+         if (f.find(first_name) != f.end()) {
+            if (rule != -1) {
+               throw std::runtime_error("Not LL1 grammatic");
+            }
+            rule = i;
          }
-         rule = i;
+      } else {
+         if (first_name == nterm->rules[i][0].name) {
+            if (rule != -1) {
+               throw std::runtime_error("Not LL1 grammatic");
+            }
+            rule = i;
+         }
       }
    }
    return rule;
@@ -307,18 +325,18 @@ int32_t grammatic_t::find_rule(const std::string & first_name, non_term_ptr cons
 void grammatic_t::print_rule(const rule_t & rule, std::ofstream & cpp_file) {
    for (auto && right_part : rule) {
       if (right_part.name == "@code") {
-         cpp_file << right_part.code;
+         cpp_file << "      " << right_part.code << "\n";
       } else if (right_part.name == "@eps") {
-         cpp_file << "      res.new_node->add_child(node_ptr(new Node(\"@code\")));\n";
+         cpp_file << "      res.node->add_child(node_ptr(new node_t(\"@eps\")));\n";
       } else if (std::islower(right_part.name[0])) {
          cpp_file << "      auto $" << right_part.name << "= " << right_part.name << "(" << right_part.code << ");\n";
-         cpp_file << "      res.new_node->add_child($" << right_part.name << ".node);\n";
+         cpp_file << "      res.node->add_child($" << right_part.name << ".node);\n";
       } else {
-         cpp_file << "      result<std::string> $" << right_part.name << '\n';
-         cpp_file << "      $" << right_part.name << ".node = node_ptr(new Node(lexer.get_cur_token_string()));\n"
+         cpp_file << "      result_t<std::string> $" << right_part.name << ";\n";
+         cpp_file << "      $" << right_part.name << ".node = node_ptr(new node_t(lexer.get_cur_token_string()));\n"
                   << "      $" << right_part.name << ".out = lexer.get_cur_token_string();\n"
                   << "      lexer.next_token();\n"
-                     "      res.new_node->add_child($" << right_part.name << ".node);\n";
+                     "      res.node->add_child($" << right_part.name << ".node);\n";
       }
    }
 }

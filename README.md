@@ -4,8 +4,8 @@ This realization needs ANTLR4 runtime library. It includes here, but you can fin
 For linux in last command set DESTDIR to temporary path and copy dircetories inlude and lib from them.
 
 # Restriction:
-0. only one return value(if you wanna >1 - use tuple). Specify only type. Name of value will $out.
-1. arguments separate by comma
-2. first token for non terminal can't be code
-3. only one term or non_term per rule
-4. Text of terms - $NONTERN.out
+* only one return value(if you wanna >1 - use tuple). Specify only type. Name of value will $out.
+* arguments separate by comma
+* first token for non terminal can't be code
+* only one term or non_term with same name per rule
+* Text of terms - $NONTERN.out

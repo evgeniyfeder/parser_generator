@@ -34,7 +34,7 @@ struct right_part_t {
 using rule_t = std::vector<right_part_t>;
 struct non_term_t : public base_t {
    std::vector<rule_t> rules;
-   std::string args = "nothing_t", returns;
+   std::string args, returns = "nothing_t";
 
    non_term_t() = default;
    non_term_t(std::string const & name);
