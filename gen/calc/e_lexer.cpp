@@ -11,6 +11,7 @@ e_lexer::e_lexer() : cur_pos(0) {
    token_regexps[MUL] = std::regex("^[*]");
    token_regexps[LP] = std::regex("^[(]");
    token_regexps[RP] = std::regex("^[)]");
+   token_regexps[POW] = std::regex("^[\^]");
    token_regexps[DIV] = std::regex("^/");
 }
 

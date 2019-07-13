@@ -25,7 +25,7 @@ private:
    void generate_parser(std::filesystem::path const & directory);
    void generate_lexer(std::filesystem::path const & directory);
 
-   std::unordered_set<std::string> get_first_terms(rule_t const &rule, size_t index);
+   std::unordered_set<std::string> get_first_terms(rule_t const &rule, size_t index, bool count_first = false);
    int32_t find_rule(const std::string & first_name, non_term_ptr const & nterm);
    void print_rule(const rule_t & rule, std::ofstream & cpp_file);
 private:

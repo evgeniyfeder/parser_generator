@@ -50,7 +50,7 @@ void grammatic_t::count_first() {
          std::string & left = non_term.second->name;
 
          for (auto && rule : non_term.second->rules) {
-            auto ft = get_first_terms(rule, 0);
+            auto ft = get_first_terms(rule, 0, true);
 
             std::size_t old_size = first[left].size();
             first[left].insert(ft.begin(), ft.end());
@@ -60,13 +60,16 @@ void grammatic_t::count_first() {
    }
 }
 
-std::unordered_set<std::string> grammatic_t::get_first_terms(const rule_t & rule, size_t index) {
+std::unordered_set<std::string> grammatic_t::get_first_terms(const rule_t & rule, size_t index, bool count_first) {
    if (index < rule.size() && rule[index].name == "@code") {
-      return get_first_terms(rule, index + 1);
+      return get_first_terms(rule, index + 1, count_first);
    } if ((index < rule.size() && rule[index].name == "@eps")) {
       return { "@eps" };
    } else if (index == rule.size()) {
-      return { "@end" };
+      if (count_first)
+         return { "@eps" };
+      else
+         return { "@end" };
    } else if (isupper(rule[index].name[0])) {
       return { rule[index].name };
    } else {
@@ -74,7 +77,7 @@ std::unordered_set<std::string> grammatic_t::get_first_terms(const rule_t & rule
 
       if (fi.find("@eps") != fi.end()) {
          fi.erase("@eps");
-         auto fn = get_first_terms(rule, index + 1);
+         auto fn = get_first_terms(rule, index + 1, count_first);
          fi.insert(fn.begin(), fn.end());
       }
       return fi;

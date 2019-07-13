@@ -2,8 +2,9 @@
 #include <string>
 #include <unordered_set>
 #include <regex>
+#include<cmath>
 enum Token {
-   WS, MINUS, PLUS, NUMBER, MUL, LP, RP, DIV, END
+   WS, MINUS, PLUS, NUMBER, MUL, LP, RP, POW, DIV, END
 };
 class e_lexer {
 public:
@@ -20,6 +21,6 @@ private:
    std::string input;
    
    std::unordered_set<Token> skips;
-   std::array<std::regex, 8> token_regexps;
-   static const int token_num = 8;
+   std::array<std::regex, 9> token_regexps;
+   static const int token_num = 9;
 };
